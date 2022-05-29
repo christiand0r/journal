@@ -1,14 +1,16 @@
 <template>
   <div class="flex items-center justify-between">
-    <h1 class="flex items-center gap-1">
-      <span class="font-bold text-4xl text-green-800">27</span>
-      <span>de mayo 2022,</span>
-      <span>viernes</span>
-    </h1>
+    <h1 class="flex items-center gap-1" v-html="getDate"></h1>
 
-    <div class="flex">
+    <div class="flex items-center gap-4">
       <button class="rounded-lg px-4 py-2 bg-red-700 text-white">
         <i class="fas fa-trash-alt"></i>
+      </button>
+      <button
+        @click="goToEntries"
+        class="rounded-lg px-4 py-2 bg-zinc-900 text-white"
+      >
+        Volver
       </button>
     </div>
   </div>
@@ -16,6 +18,7 @@
   <textarea
     cols="30"
     rows="10"
+    v-model="entry.text"
     placeholder="Comienza a escribir..."
     class="textarea-screen custom-scroll resize-none outline-none mt-4 w-full"
   ></textarea>
@@ -28,28 +31,80 @@
 
 <script>
 import { defineAsyncComponent } from "@vue/runtime-core";
+import { mapGetters } from "vuex";
 
 import Fab from "../components/Fab.vue";
 
+// HELPERS
+import transformDate from "../helpers/transformDate.js";
+
 export default {
   name: "NoEntryView",
-  components: {
-    Fab,
-    Thumbanil: defineAsyncComponent(() =>
-      import("../components/Thumbnail.vue")
-    ),
+  props: {
+    id: {
+      type: String,
+      required: true,
+    },
   },
 
   data() {
     return {
+      entry: null,
       isVisible: false,
     };
   },
 
   methods: {
+    loadEntry() {
+      const entry = this.getEntryById(this.id);
+
+      if (!entry)
+        this.$router.push({
+          name: "noEntry",
+          params: { text: "Ups.. parece que la entrada no existe" },
+        });
+
+      this.entry = entry;
+    },
+
     showImage() {
       this.isVisible = !this.isVisible;
     },
+
+    goToEntries() {
+      this.$router.push({
+        name: "noEntry",
+      });
+    },
+  },
+
+  computed: {
+    getDate() {
+      const { day, month, number, year } = transformDate(this.entry.date);
+
+      return `
+      <span class="font-bold text-4xl text-green-800">${number}</span>
+      <span>de ${month} ${year},</span>
+      <span>${day}</span>`;
+    },
+    ...mapGetters("journal", ["getEntryById"]),
+  },
+
+  watch: {
+    id() {
+      this.loadEntry();
+    },
+  },
+
+  created() {
+    this.loadEntry();
+  },
+
+  components: {
+    Fab,
+    Thumbanil: defineAsyncComponent(() =>
+      import("../components/Thumbnail.vue")
+    ),
   },
 };
 </script>
