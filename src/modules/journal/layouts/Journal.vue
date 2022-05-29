@@ -1,4 +1,6 @@
 <template>
+  <Loader v-if="loading" />
+
   <Header />
   <div class="grid grid-cols-5">
     <Entries />
@@ -9,13 +11,28 @@
 </template>
 
 <script>
+import { mapActions, mapState } from "vuex";
+
+import Loader from "../components/Loader.vue";
 import Header from "../components/Header.vue";
 import Entries from "../components/Entries.vue";
 
 export default {
   name: "Journal",
 
+  methods: {
+    ...mapActions("journal", ["getEntries"]),
+  },
+  computed: {
+    ...mapState("journal", ["loading"]),
+  },
+
+  created() {
+    this.getEntries();
+  },
+
   components: {
+    Loader,
     Header,
     Entries,
   },

@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col items-center justify-center gap-8 h-full">
     <h1 class="font-semibold text-center text-4xl">
-      {{ text }}
+      {{ siwtchMessage }}
     </h1>
     <div class="w-1/2">
       <img
@@ -16,6 +16,7 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 import Fab from "../components/Fab.vue";
 
 export default {
@@ -26,6 +27,15 @@ export default {
       type: String,
       default: "Escoge o crea una entrada para comenzar",
     },
+  },
+
+  computed: {
+    siwtchMessage() {
+      return this.entries.length > 0
+        ? this.text
+        : "Crea tu primera entrada para comenzar";
+    },
+    ...mapState("journal", ["entries"]),
   },
 
   components: {

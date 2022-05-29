@@ -1,32 +1,34 @@
 <template>
-  <div class="flex items-center justify-between">
-    <h1 class="flex items-center gap-1" v-html="getDate"></h1>
+  <template v-if="entry">
+    <div class="flex items-center justify-between">
+      <h1 class="flex items-center gap-1" v-html="getDate"></h1>
 
-    <div class="flex items-center gap-4">
-      <button class="rounded-lg px-4 py-2 bg-red-700 text-white">
-        <i class="fas fa-trash-alt"></i>
-      </button>
-      <button
-        @click="goToEntries"
-        class="rounded-lg px-4 py-2 bg-zinc-900 text-white"
-      >
-        Volver
-      </button>
+      <div class="flex items-center gap-4">
+        <button class="rounded-lg px-4 py-2 bg-red-700 text-white">
+          <i class="fas fa-trash-alt"></i>
+        </button>
+        <button
+          @click="goToEntries"
+          class="rounded-lg px-4 py-2 bg-zinc-900 text-white"
+        >
+          Volver
+        </button>
+      </div>
     </div>
-  </div>
 
-  <textarea
-    cols="30"
-    rows="10"
-    v-model="entry.text"
-    placeholder="Comienza a escribir..."
-    class="textarea-screen custom-scroll resize-none outline-none mt-4 w-full"
-  ></textarea>
+    <textarea
+      cols="30"
+      rows="10"
+      v-model="entry.text"
+      placeholder="Comienza a escribir..."
+      class="textarea-screen custom-scroll resize-none outline-none mt-4 w-full"
+    ></textarea>
 
-  <Thumbanil :show="isVisible" />
+    <Thumbanil :show="isVisible" />
 
-  <Fab class="bottom-4 right-4" />
-  <Fab icon="fa-image" class="bottom-4 right-20" @click="showImage" />
+    <Fab @onClick="saveEntry" class="bottom-4 right-4" />
+    <Fab @onClick="showImage" icon="fa-image" class="bottom-4 right-20" />
+  </template>
 </template>
 
 <script>
@@ -58,13 +60,18 @@ export default {
     loadEntry() {
       const entry = this.getEntryById(this.id);
 
-      if (!entry)
-        this.$router.push({
+      if (!entry) {
+        return this.$router.push({
           name: "noEntry",
           params: { text: "Ups.. parece que la entrada no existe" },
         });
+      }
 
       this.entry = entry;
+    },
+
+    async saveEntry() {
+      console.log("Guardando entrada...");
     },
 
     showImage() {
