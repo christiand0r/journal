@@ -4,12 +4,16 @@
     class="flex flex-col justify-center gap-4 rounded-lg cursor-pointer px-4 py-6 bg-white"
   >
     <h3
-      v-html="getDate"
+      v-html="creationDay"
       class="flex items-center gap-1 font-semibold text-xl"
     ></h3>
     <p>
       {{ textOverflow }}
     </p>
+
+    <small class="text-gray-500">
+      Última modificación: <span>{{ modifyDay }}</span>
+    </small>
   </div>
 </template>
 
@@ -39,13 +43,21 @@ export default {
       return text.length >= 120 ? text.slice(0, 120) + "..." : text;
     },
 
-    getDate() {
+    creationDay() {
       const { day, month, number, year } = transformDate(this.entry.date);
 
       return `
       <span class="font-bold text-4xl text-green-800">${number}</span>
       <span>de ${month} ${year},</span>
       <span>${day}</span>`;
+    },
+
+    modifyDay() {
+      const { day, monthNumber, number, year } = transformDate(
+        this.entry.modified
+      );
+
+      return `${number}/${monthNumber}/${year}, ${day}`;
     },
   },
 };

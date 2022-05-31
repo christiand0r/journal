@@ -12,7 +12,7 @@
     </div>
   </div>
 
-  <Fab icon="fa-plus" class="bottom-4 right-4" />
+  <Fab @onClick="newEntry" icon="fa-plus" class="bottom-4 right-4" />
 </template>
 
 <script>
@@ -26,6 +26,12 @@ export default {
     text: {
       type: String,
       default: "Escoge o crea una entrada para comenzar",
+    },
+  },
+
+  methods: {
+    newEntry() {
+      this.$router.push({ name: "entry", params: { id: "new" } });
     },
   },
 

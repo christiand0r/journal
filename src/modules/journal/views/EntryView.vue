@@ -4,7 +4,11 @@
       <h1 class="flex items-center gap-1" v-html="getDate"></h1>
 
       <div class="flex items-center gap-4">
-        <button class="rounded-lg px-4 py-2 bg-red-700 text-white">
+        <button
+          v-if="entry.id"
+          @click="onDeleteEntry"
+          class="rounded-lg px-4 py-2 bg-red-700 text-white"
+        >
           <i class="fas fa-trash-alt"></i>
         </button>
         <button
@@ -24,7 +28,7 @@
       class="textarea-screen custom-scroll resize-none outline-none mt-4 w-full"
     ></textarea>
 
-    <Thumbanil :show="isVisible" />
+    <Thumbanil :show="isVisible" :image="entry.picture" @onUpload="setImage" />
 
     <Fab @onClick="saveEntry" class="bottom-4 right-4" />
     <Fab @onClick="showImage" icon="fa-image" class="bottom-4 right-20" />
@@ -33,15 +37,20 @@
 
 <script>
 import { defineAsyncComponent } from "@vue/runtime-core";
-import { mapGetters } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 
-import Fab from "../components/Fab.vue";
+import notie from "notie";
+import Swal from "sweetalert2";
+import "sweetalert2/src/sweetalert2.scss";
 
 // HELPERS
 import transformDate from "../helpers/transformDate.js";
+import uploadImage from "../helpers/uploadImage.js";
+
+import Fab from "../components/Fab.vue";
 
 export default {
-  name: "NoEntryView",
+  name: "EntryView",
   props: {
     id: {
       type: String,
@@ -52,26 +61,95 @@ export default {
   data() {
     return {
       entry: null,
+      fileImage: null,
       isVisible: false,
     };
   },
 
   methods: {
     loadEntry() {
-      const entry = this.getEntryById(this.id);
+      let entry = null;
 
-      if (!entry) {
-        return this.$router.push({
-          name: "noEntry",
-          params: { text: "Ups.. parece que la entrada no existe" },
-        });
+      if (this.id === "new") {
+        entry = {
+          date: Date.now(),
+          modified: Date.now(),
+          picture: null,
+          text: "",
+        };
+      } else {
+        entry = this.getEntryById(this.id);
+
+        // If not exits return and show custom message
+        if (!entry) {
+          return this.$router.push({
+            name: "noEntry",
+            params: { text: "Ups.. parece que la entrada no existe" },
+          });
+        }
       }
 
       this.entry = entry;
     },
 
     async saveEntry() {
-      console.log("Guardando entrada...");
+      if (this.entry.text.length === 0)
+        return notie.alert({
+          type: "warning",
+          text: "No puede guardar una entrada vacía",
+        });
+
+      new Swal({
+        title: "Guardando",
+        text: "por favor espere...",
+      });
+      Swal.showLoading();
+
+      const picture = await uploadImage(this.fileImage);
+      this.entry.picture = picture;
+
+      if (this.entry.id) {
+        await this.updateEntry(this.entry);
+      } else {
+        // Await for the id and then navigate
+        // to the entry created
+        const id = await this.createEntry(this.entry);
+        this.$router.push({
+          name: "entry",
+          params: { id },
+        });
+      }
+
+      Swal.fire({
+        title: "Entrada guardada",
+        icon: "success",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    },
+
+    onDeleteEntry() {
+      notie.confirm({
+        text: "¿Está seguro de eliminar está entrada?",
+        cancelCallback: () => {
+          notie.alert({
+            type: "neutral",
+            text: "Eliminación cancelada",
+            time: 2,
+          });
+        },
+        submitCallback: async () => {
+          await this.deleteEntry(this.entry.id);
+
+          notie.alert({
+            type: "success",
+            text: "Entrada eliminada exitosamente",
+            time: 2,
+          });
+
+          setTimeout(() => this.$router.push({ name: "noEntry" }), 2000);
+        },
+      });
     },
 
     showImage() {
@@ -83,6 +161,12 @@ export default {
         name: "noEntry",
       });
     },
+
+    setImage(file) {
+      this.fileImage = file;
+    },
+
+    ...mapActions("journal", ["createEntry", "updateEntry", "deleteEntry"]),
   },
 
   computed: {

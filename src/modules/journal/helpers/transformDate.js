@@ -29,11 +29,13 @@ export default (stamp) => {
   const number = date.getDate();
   const day = days[date.getDay()];
   const month = months[date.getMonth()];
+  const monthNumber = date.getMonth() + 1;
   const year = date.getFullYear();
 
   return {
     day,
     month,
+    monthNumber,
     number,
     year,
   };

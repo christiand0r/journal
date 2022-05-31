@@ -27,8 +27,8 @@ export default {
     ...mapState("journal", ["loading"]),
   },
 
-  created() {
-    this.getEntries();
+  async created() {
+    await this.getEntries();
   },
 
   components: {
