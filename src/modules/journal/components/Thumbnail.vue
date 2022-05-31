@@ -38,7 +38,7 @@ export default {
 
   data() {
     return {
-      imageThumbnail: this.image,
+      imageThumbnail: null,
       loading: false,
     };
   },
@@ -85,12 +85,14 @@ export default {
 
   computed: {
     switchImage() {
-      return this.imageThumbnail ?? "https://placeimg.com/1080/720/any";
+      return this.image
+        ? (this.imageThumbnail = this.image)
+        : (this.imageThumbnail = "https://placeimg.com/1080/720/any");
     },
     toggleImage() {
       return this.show
-        ? "group fixed -right-64 bottom-24 border rounded-lg p-2 w-60 border-gray-100 bg-white transition-all"
-        : "group fixed right-4 bottom-24 border rounded-lg p-2 w-60 border-gray-100 bg-white transition-all";
+        ? "group fixed right-4 bottom-24 border rounded-lg p-2 w-60 border-gray-100 bg-white transition-all"
+        : "group fixed -right-64 bottom-24 border rounded-lg p-2 w-60 border-gray-100 bg-white transition-all";
     },
   },
 
