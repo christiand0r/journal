@@ -62,7 +62,7 @@ export default {
     return {
       entry: null,
       fileImage: null,
-      isVisible: false,
+      isVisible: true,
     };
   },
 

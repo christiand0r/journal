@@ -24,7 +24,7 @@
 <script>
 import LoaderImage from "./LoaderImage.vue";
 export default {
-  name: "Thumbnail Image",
+  name: "ThumbnailImage",
   props: {
     image: {
       type: String,
@@ -32,13 +32,13 @@ export default {
     },
     show: {
       type: Boolean,
-      default: false,
+      default: true,
     },
   },
 
   data() {
     return {
-      imageThumbnail: null,
+      imageThumbnail: this.image,
       loading: false,
     };
   },
@@ -85,14 +85,22 @@ export default {
 
   computed: {
     switchImage() {
-      return this.image
-        ? (this.imageThumbnail = this.image)
-        : (this.imageThumbnail = "https://placeimg.com/1080/720/any");
+      return this.imageThumbnail ?? "https://placeimg.com/1080/720/any";
     },
     toggleImage() {
       return this.show
         ? "group fixed right-4 bottom-24 border rounded-lg p-2 w-60 border-gray-100 bg-white transition-all"
         : "group fixed -right-64 bottom-24 border rounded-lg p-2 w-60 border-gray-100 bg-white transition-all";
+    },
+  },
+
+  watch: {
+    image() {
+      // Like the component is not unmounted watch the property image
+      // for assing the value each time to change to other entry
+      return this.image
+        ? (this.imageThumbnail = this.image)
+        : (this.imageThumbnail = null);
     },
   },
 
