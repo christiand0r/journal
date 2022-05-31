@@ -2,7 +2,7 @@
   <Loader v-if="loading" />
 
   <Header />
-  <div class="grid grid-cols-5">
+  <div class="grid grid-cols-5 xxl:grid-cols-6">
     <Entries />
     <main class="col-span-full order-1 p-4 md:col-span-3 xxl:col-span-4">
       <router-view />

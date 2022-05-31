@@ -1,6 +1,6 @@
 <template>
   <aside
-    class="col-span-full order-2 p-2 md:col-span-2 xxl:col-span-1 md:order-1 bg-zinc-100"
+    class="col-span-full order-2 p-2 md:col-span-2 xxl:col-span-2 md:order-1 bg-zinc-100"
   >
     <div class="flex flex-col gap-x-4 gap-y-2 mb-4 xl:flex-row">
       <input
