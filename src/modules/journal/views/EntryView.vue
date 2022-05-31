@@ -93,21 +93,25 @@ export default {
     },
 
     async saveEntry() {
+      // The user can't save if the entry text is empty
       if (this.entry.text.length === 0)
         return notie.alert({
           type: "warning",
           text: "No puede guardar una entrada vacía",
         });
 
+      // Set a loader waiting for the finish uploaded
       new Swal({
         title: "Guardando",
         text: "por favor espere...",
       });
       Swal.showLoading();
 
+      // Upload the image and set the property picture in the entry
       const picture = await uploadImage(this.fileImage);
       this.entry.picture = picture;
 
+      // Determinate is a new entry or a update entry
       if (this.entry.id) {
         await this.updateEntry(this.entry);
       } else {
@@ -120,6 +124,10 @@ export default {
         });
       }
 
+      // Clear the file image
+      this.fileImage = null;
+
+      // Notify that the entry was saved
       Swal.fire({
         title: "Entrada guardada",
         icon: "success",
