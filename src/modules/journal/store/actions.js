@@ -19,11 +19,13 @@ export const getEntries = async ({ commit }) => {
 
 export const updateEntry = async ({ commit }, payload) => {
   // Extract id to not record as a property
-  const { id, ...restEntry } = payload;
+  const { date, picture, text, id } = payload;
 
   // Add the modified property with the today date
   const data = {
-    ...restEntry,
+    date,
+    picture,
+    text,
     modified: Date.now(),
   };
 
@@ -31,7 +33,7 @@ export const updateEntry = async ({ commit }, payload) => {
   await journalApi.put(`/entries/${id}.json`, data);
 
   // Break the reference and make the commit
-  commit("updateEntry", { ...payload, modified: Date.now() });
+  commit("updateEntry", { ...data, id });
 };
 
 export const createEntry = async ({ commit }, payload) => {

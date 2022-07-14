@@ -19,8 +19,6 @@ const uploadImage = async (file) => {
 
     const { data } = await axios.post(url, formData);
 
-    console.log(data);
-
     return data.secure_url;
   } catch (error) {
     console.log("Ocurrio un error al intentar subir la imagen", error);
