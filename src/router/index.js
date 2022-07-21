@@ -1,6 +1,9 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 
+import isAuthGuard from "../modules/auth/guards/authGuard";
+
 import journalPath from "../modules/journal/router";
+import authPath from "../modules/auth/router";
 
 const routes = [
   {
@@ -10,7 +13,12 @@ const routes = [
   },
   {
     path: "/journal",
+    beforeEnter: [isAuthGuard],
     ...journalPath,
+  },
+  {
+    path: "/auth",
+    ...authPath,
   },
 ];
 

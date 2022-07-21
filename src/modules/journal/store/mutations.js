@@ -31,3 +31,5 @@ export const deleteEntry = (state, payload) => {
 
   state.loading = false;
 };
+
+export const clearEntries = (state) => (state.entries = []);
