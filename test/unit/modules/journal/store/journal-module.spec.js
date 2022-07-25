@@ -1,9 +1,12 @@
+import { expect, beforeAll } from "vitest";
+
 import { createStore } from "vuex";
 
+import authApi from "@/api/authAPI";
+
 import journal from "@/modules/journal/store";
+
 import { journalState } from "../../../mocks/data/journal-state";
-import { expect } from "vitest";
-import { updateEntry } from "../../../../../src/modules/journal/store/mutations";
 
 const createVuexStore = (initialState) =>
   createStore({
@@ -16,6 +19,16 @@ const createVuexStore = (initialState) =>
   });
 
 describe("Vuex - Test in Journal Store", () => {
+  beforeAll(async () => {
+    const { data } = await authApi.post(":signInWithPassword", {
+      email: "test@test.com",
+      password: "123456",
+      returnSecureToken: true,
+    });
+
+    localStorage.setItem("token", data.idToken);
+  });
+
   test("Must be have this initial State", () => {
     const store = createVuexStore({ isLoading: true, entries: [] });
 
@@ -145,7 +158,7 @@ describe("Vuex - Test in Journal Store", () => {
 
     expect(entries).toHaveLength(2);
 
-    expect(entries.find((entry) => entry.id === updateEntry.id)).not.toEqual({
+    expect(entries.find((entry) => entry.id === updatedEntry.id)).not.toEqual({
       id: "-N3IbEuR_IEtIJDy4osY",
       date: 1653891439812,
       modified: 1653893179216,

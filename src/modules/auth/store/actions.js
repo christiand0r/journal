@@ -97,6 +97,6 @@ export const checkAuthentication = async ({ commit }) => {
 
     commit("logoutUser");
 
-    return { ok: false };
+    return { ok: false, message };
   }
 };

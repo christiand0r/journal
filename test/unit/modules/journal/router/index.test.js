@@ -37,7 +37,7 @@ describe("Test in router module Journal", () => {
 
     expect(routes).toContain("EntryView");
     expect(routes).toContain("NoEntryView");
-  });
+  }, 10000);
 
   test("Should be return id route", () => {
     const route = {
